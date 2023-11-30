@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { QuizContext } from "../Helpers/context";
-import '../App.css';
+import "../App.css";
 
 export default function Home() {
   const { setInitial } = useContext(QuizContext);
