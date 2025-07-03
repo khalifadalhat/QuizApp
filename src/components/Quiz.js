@@ -8,6 +8,7 @@ export default function Quiz() {
   const [optionChosen, setOptionChosen] = useState("");
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [hoveredOption, setHoveredOption] = useState(null);
 
   const { score, setScore, setInitial } = useContext(QuizContext);
 
@@ -24,6 +25,8 @@ export default function Quiz() {
 
   const nextQuestion = () => {
     setShowFeedback(false);
+    setOptionChosen("");
+    setHoveredOption(null);
     setCurrQuestion(currQuestion + 1);
   };
 
@@ -38,9 +41,7 @@ export default function Quiz() {
       <Card className="quiz-card">
         <Card.Body>
           <div className="d-flex justify-content-between mb-3">
-            <span>
-              Question {currQuestion + 1}/{Questions.length}
-            </span>
+            <span>Question {currQuestion + 1}/{Questions.length}</span>
             <span>Score: {score}</span>
           </div>
 
@@ -51,23 +52,29 @@ export default function Quiz() {
           </Card.Title>
 
           <div className="options-grid">
-            {["a", "b", "c", "d"].map((option) => (
-              <Button
-                key={option}
-                variant={
-                  optionChosen === option
-                    ? isCorrect
-                      ? "success"
-                      : "danger"
-                    : "outline-primary"
-                }
-                onClick={() => !showFeedback && checkAnswer(option)}
-                disabled={showFeedback}
-                className="option-btn"
-              >
-                {Questions[currQuestion][option]}
-              </Button>
-            ))}
+            {["a", "b", "c", "d"].map((option) => {
+              let variant = "outline-primary";
+              
+              if (optionChosen === option) {
+                variant = isCorrect ? "success" : "danger";
+              } else if (hoveredOption === option && !showFeedback) {
+                variant = "primary";
+              }
+
+              return (
+                <Button
+                  key={option}
+                  variant={variant}
+                  onClick={() => !showFeedback && checkAnswer(option)}
+                  onMouseEnter={() => !showFeedback && setHoveredOption(option)}
+                  onMouseLeave={() => setHoveredOption(null)}
+                  disabled={showFeedback}
+                  className="option-btn"
+                >
+                  {Questions[currQuestion][option]}
+                </Button>
+              );
+            })}
           </div>
 
           {showFeedback && (
